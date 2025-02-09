@@ -1,4 +1,4 @@
-#⏱️ Cronómetro con Promesas
+⏱️ Cronómetro con Promesas
 
 Este proyecto es una aplicación web simple que implementa un cronómetro utilizando JavaScript y Promesas. Permite iniciar, detener y reiniciar el cronómetro con una interfaz visual minimalista.
 
@@ -24,7 +24,7 @@ JavaScript (ES6): Lógica del cronómetro con uso de Promesas.
 
 Descarga o clona el repositorio:
 
-git clone https://github.com/tuusuario/cronometro-promesas.git
+git clone https://github.com/lygarmo/Cronometro/blob/main/cronometro.html
 
 Abre el archivo index.html en tu navegador.
 
