@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>Cronómetro Promesas</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                background-color: #2d2d2d;
+                color: white;
+            }
+
+            #cronometro {
+                align-content: center;
+                text-align: center;
+                font-size: 48px;
+                font-weight: bold;
+                background-color: #414141;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+                margin-top: 20px;
+                margin-bottom: 20px;
+                width: 500px;
+                height: 100px;
+            }
+
+            #botones {
+                display: flex;
+                gap: 10px; /*Dar espacio entre los botones*/
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+            }
+
+            button:hover {
+                background-color: #66cf6b;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="cronometro">00:00:00</div>
+        <div id="botones">
+            <button id="iniciar">Iniciar</button>
+            <button id="detener">Detener</button>
+            <button id="reiniciar">Reiniciar</button>
+        </div>
+
+        <script>
+            let segundos = 0; 
+            let timeout; 
+            //creo esta varibale la cual va a comprobar que el cronometro este en funcionamiento
+            //ya que sino al detener la ejecucion me daria fallo
+            let comrpobarCronometro=false;
+
+            const mostrarCronometro = document.getElementById("cronometro");
+            const botonIniciar = document.getElementById("iniciar");
+            const botonDetener = document.getElementById("detener");
+            const botonReiniciar = document.getElementById("reiniciar");
+
+            // Funcion para convertir segundos a horas, minutos y segundos
+            function formatearTiempo(segundos) {
+                const horas = Math.floor(segundos / 3600); // Calcula las horas
+                const minutos = Math.floor((segundos % 3600) / 60); // Calcula los minutos
+                const segundosRestantes = segundos % 60; // Calcula los segundos restantes
+                return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundosRestantes).padStart(2, '0')}`;
+            }
+
+            function iniciarCronometro() {
+                if(!comrpobarCronometro){
+                    comrpobarCronometro=true;
+                
+                    actualizarCronometro()
+                    .then(function(){
+                        return actualizarCronometro();
+                    })
+                    .catch(function (error) {  
+                        console.log("Error al actualizar el cronometro");
+                    })
+                    .finally(function() {
+                        console.log("Cronometro iniciado");
+                    });
+                }
+            }
+
+            var promesa;
+
+            function actualizarCronometro() {
+                promesa=new Promise(function(resolver,rechazar){
+                    try{
+                        segundos++;
+                        mostrarCronometro.textContent = formatearTiempo(segundos); 
+                        timeout = setTimeout(function(){
+                            if(comrpobarCronometro){
+                               resolver();
+                                actualizarCronometro(); 
+                            }
+                        },1000);
+                    }catch(error){
+                        rechazar(error);
+                    }
+                });
+                
+                return promesa;
+            }
+
+            function detenerCronometro() {
+                clearTimeout(timeout);
+                comrpobarCronometro=false;
+            }
+
+            botonReiniciar.addEventListener('click', () => {
+                detenerCronometro();
+                segundos = 0;
+                mostrarCronometro.textContent = formatearTiempo(segundos);
+                botonIniciar.style.display = 'block';
+                botonDetener.style.display = 'block';
+            });
+
+            botonDetener.addEventListener('click', () => {
+                detenerCronometro();
+                botonDetener.style.display = 'none';
+                botonIniciar.style.display = 'block';
+            });
+
+            botonIniciar.addEventListener('click', () => {
+                iniciarCronometro();
+                botonIniciar.style.display = 'none';
+                botonDetener.style.display = 'block';
+            });
+        </script>
+    </body>
+</html>
+
